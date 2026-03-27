@@ -1,0 +1,50 @@
+pipeline {
+  agent any
+    
+  stages {
+    stage("Clone code from GitHub") {
+            steps {
+                script {
+                    checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[credentialsId: 'GITHUB_CREDENTIALS', url: 'https://github.com/amitmishra61/Deploy-Java-helm-chart-on-AWS-EKS-using-Jenkins-Pipeline/']])
+                }
+            }
+        }
+     
+  
+     stage('Build Node JS Docker Image') {
+            steps {
+                script {
+                  sh 'docker build -t amitdevops61/java-1.0'
+                }
+            }
+        }
+
+
+        stage('Deploy Docker Image to DockerHub') {
+            steps {
+                script {
+                 withCredentials([string(credentialsId: 'amitdevops61', variable: 'amitdevops61')]) {
+                    sh 'docker login -u devopshint -p ${amitdevops61}'
+            }
+            sh 'docker push amitdevops61/java-1.0'
+        }
+            }   
+        }
+         
+    stage('Deploy to K8s') {
+            steps {
+                // Use 'configFileProvider' or 'withCredentials' to load your Kubeconfig
+                withCredentials([file(credentialsId: "${KUBECONFIG_ID}", variable: 'KUBECONFIG')]) {
+                    sh """
+                    export KUBECONFIG=${KUBECONFIG}
+                    helm upgrade --install java-release ./java-chart \
+                    --set image.repository=${DOCKER_HUB_USER}/${IMAGE_NAME} \
+                    --set image.tag=${IMAGE_TAG} \
+                    --namespace default
+                    """
+        }
+      }
+    }
+
+  }
+}
