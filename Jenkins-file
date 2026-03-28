@@ -11,7 +11,7 @@ pipeline {
         }
      
   
-     stage('Build Node JS Docker Image') {
+     stage('Build Java Docker Image') {
             steps {
                 script {
                   sh 'docker build -t amitdevops61/java-1.0'
@@ -24,7 +24,7 @@ pipeline {
             steps {
                 script {
                  withCredentials([string(credentialsId: 'amitdevops61', variable: 'amitdevops61')]) {
-                    sh 'docker login -u devopshint -p ${amitdevops61}'
+                    sh 'docker login -u amitdevops61 -p ${amitdevops61}'
             }
             sh 'docker push amitdevops61/java-1.0'
         }
