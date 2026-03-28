@@ -14,7 +14,7 @@ pipeline {
      stage('Build Java Docker Image') {
             steps {
                 script {
-                  sh 'docker build -t amitdevops61/java-1.0'
+                  sh 'docker build -t amitdevops61/java-1.0 .'
                 }
             }
         }
