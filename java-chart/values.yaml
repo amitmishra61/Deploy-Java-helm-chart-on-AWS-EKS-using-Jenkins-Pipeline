@@ -51,7 +51,7 @@ securityContext: {}
 
 # This is for setting up a service more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/
 service:
-  type: nodePort
+  type: NodePort
   port: 80
   targetPort: 8080
   protocol: TCP
