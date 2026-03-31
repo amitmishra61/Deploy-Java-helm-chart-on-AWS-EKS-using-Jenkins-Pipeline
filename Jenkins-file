@@ -36,7 +36,7 @@ pipeline {
         script {
           sh ('aws eks update-kubeconfig --name amiteks-cluster --region us-east-1')
           sh "kubectl get ns"
-          sh "helm install java ./java-chart"
+          sh "helm upgrade --install java ./java-chart"
         }
       }
     }
