@@ -31,17 +31,12 @@ pipeline {
             }   
         }
          
-    stage('Deploy to K8s') {
-            steps {
-                // Use 'configFileProvider' or 'withCredentials' to load your Kubeconfig
-                withCredentials([file(credentialsId: "${KUBECONFIG_ID}", variable: 'KUBECONFIG')]) {
-                    sh """
-                    export KUBECONFIG=${KUBECONFIG}
-                    helm upgrade --install java-release ./java-chart \
-                    --set image.repository=${DOCKER_HUB_USER}/${IMAGE_NAME} \
-                    --set image.tag=${IMAGE_TAG} \
-                    --namespace default
-                    """
+    stage('Deploying Java App helm chrt on eks') {
+      steps {
+        script {
+          sh ('aws eks update-kubeconfig --name amiteks-cluster --region us-east-1')
+          sh "kubectl get ns"
+          sh "helm install java ./java-chart"
         }
       }
     }
